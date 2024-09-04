@@ -26,48 +26,12 @@ struct EditingView: View {
     
     var body: some View {
         Form {
-            TextField("Name", text: $user.name)
+            Text(user.name)
         }
     }
 }
 
-//#Preview {
-//    EditingView(user: <#User#>)
-//    ContentView(user: <#User#>)
-//}
-
-#Preview {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: User.self, configurations: config)
-
-    for i in 1..<10 {
-        let user = User(name: "Example User \(i)")
-        container.mainContext.insert(user)
-    }
-
-    return ContentView()
-        .modelContainer(container)
-}
-
-#Preview {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: User.self, configurations: config)
-    
-    let user = User(name: "Test User")
-    return EditingView(user: user)
-        .modelContainer(container)
-}
-
-
-@Model
-class User {
-    var name: String
-    
-    init(name: String) {
-        self.name = name
-    }
-}
-
+//1
 @MainActor
 class DataController {
     static let previewContainer: ModelContainer = {
@@ -86,3 +50,46 @@ class DataController {
         }
     }()
 }
+
+
+//1
+#Preview {
+    ContentView()
+        .modelContainer(DataController.previewContainer)
+}
+
+//2
+#Preview {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: User.self, configurations: config)
+
+    for i in 1..<10 {
+        let user = User(name: "Example User \(i)")
+        container.mainContext.insert(user)
+    }
+
+    return ContentView()
+        .modelContainer(container)
+}
+
+//3
+#Preview {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: User.self, configurations: config)
+    
+    let user = User(name: "Test User")
+    
+    return EditingView(user: user)
+        .modelContainer(container)
+}
+
+
+@Model
+class User {
+    var name: String
+    
+    init(name: String) {
+        self.name = name
+    }
+}
+
